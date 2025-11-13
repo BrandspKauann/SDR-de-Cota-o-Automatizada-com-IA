@@ -1,0 +1,1414 @@
+{
+  "name": "Bot HIRAYAMA",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "Hirayama",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -464,
+        -48
+      ],
+      "id": "3452c6f3-3621-4e5a-b4d7-9c21affd8408",
+      "name": "Webhook",
+      "webhookId": "9e34086b-4c19-4e24-a96b-e8b2888193bf"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c055dd53-f3cc-43f4-8ca9-83af00dd5e88",
+              "name": "telefone",
+              "value": "={{ $json.body.phone }}",
+              "type": "number"
+            },
+            {
+              "id": "4731646a-9f40-40e1-aef1-db7caf0e1220",
+              "name": "fromMe",
+              "value": "={{ $json.body.fromMe }}",
+              "type": "boolean"
+            },
+            {
+              "id": "cb7d4213-1e9f-411e-ad80-947caed5aa4b",
+              "name": "message",
+              "value": "={{ $json.body.text.message }}",
+              "type": "string"
+            },
+            {
+              "id": "fe98f198-b67e-4436-baa2-40ed4d31bdb2",
+              "name": "Aiko",
+              "value": "={{ $('Webhook').item.json.body.connectedPhone }}",
+              "type": "string"
+            },
+            {
+              "id": "ea54f8d7-05f6-4d87-971e-360b36bedb42",
+              "name": "Via API",
+              "value": "={{ $('Webhook').item.json.body.fromApi }}",
+              "type": "boolean"
+            },
+            {
+              "id": "f8a3118b-51c6-403d-a6a2-db40b69073e9",
+              "name": "Nome",
+              "value": "={{ $json.body.senderName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        -48
+      ],
+      "id": "e00b9c4d-eb51-44f5-a6ab-71722441c35e",
+      "name": "Normalização"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1db13a93-e10d-4fc1-a049-69a26709593f",
+              "leftValue": "={{ $('Webhook').item.json.body.fromMe }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        -48
+      ],
+      "id": "2999b0b7-0cb3-4684-9859-90656e50469a",
+      "name": "Foi enviado por mim?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "af12e011-1a84-476d-92aa-feb12fd21ac2",
+              "leftValue": "={{ $('Webhook').item.json.body.fromApi }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        304,
+        -304
+      ],
+      "id": "3f9b1cc6-e1be-4600-95d8-4e173b74fcba",
+      "name": "Foi via API?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2016,
+        -288
+      ],
+      "id": "080d08aa-01c4-42ba-8934-14ea344e88eb",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "={{ $json.telefone }}_block",
+        "value": "true",
+        "expire": true,
+        "ttl": 20
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        560,
+        -224
+      ],
+      "id": "b6438207-0763-401e-960c-49f15109a1f8",
+      "name": "Criar Chave Block",
+      "credentials": {
+        "redis": {
+          "id": "Cw5plRerc1glYA4a",
+          "name": "Redis account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7b0cf9ed-c3dc-41c2-ace0-b6fc56586dac",
+              "leftValue": "={{ $json.propertyName }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        -32
+      ],
+      "id": "56d811e6-aa52-4a1d-a9bb-d86dde80fdd4",
+      "name": "Bloquear IA?",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "={{ $json.telefone }}_block",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        288,
+        -32
+      ],
+      "id": "40d08117-ffc0-41ac-b342-3ab86a0cf239",
+      "name": "Buscar chave block",
+      "credentials": {
+        "redis": {
+          "id": "Cw5plRerc1glYA4a",
+          "name": "Redis account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4321ffa0-26b9-4264-a916-b4b80e26e859",
+              "name": "Chave",
+              "value": "={{ $('Normalização').item.json.telefone }}",
+              "type": "string"
+            },
+            {
+              "id": "d57ebc19-9bf6-4d50-9c39-bc2570bf995a",
+              "name": "msg",
+              "value": "={{ $('Normalização').item.json.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        816,
+        48
+      ],
+      "id": "07e0a3bc-7222-46fd-91c4-9e38e5cc8d59",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $json.Chave }}",
+        "messageData": "={{ $json.msg }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        48
+      ],
+      "id": "d41da80d-0eb1-455c-8d27-bc4e954ddb8a",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "Cw5plRerc1glYA4a",
+          "name": "Redis account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 7
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1216,
+        48
+      ],
+      "id": "5927daae-3a65-42d4-a851-843db85ad75a",
+      "name": "Wait",
+      "webhookId": "bbcf3f3a-93aa-45ed-8092-78b7cf90d17e"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "mensagens",
+        "key": "={{ $json.Chave }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        48
+      ],
+      "id": "02138246-917e-418f-bb30-8515c3e63283",
+      "name": "Redis1",
+      "credentials": {
+        "redis": {
+          "id": "Cw5plRerc1glYA4a",
+          "name": "Redis account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6847bf2b-e5d6-499b-991d-9c4e799e9aee",
+              "leftValue": "={{ $json.mensagens.last() }}",
+              "rightValue": "={{ $('Edit Fields').item.json.msg }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1632,
+        48
+      ],
+      "id": "66bf012f-1b73-4ee0-aae3-b34c2547bb44",
+      "name": "If",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.mensagens }}",
+                    "rightValue": "Texto",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "e18880d1-4e34-42b8-a510-db5101917ae9"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "bb25d274-319e-4da1-9848-50344ec349e3",
+                    "leftValue": "={{ $json.body.audio }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "dd3fc63b-3a7e-4492-9b04-9c017f424f95",
+                    "leftValue": "={{ $json.body.image }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Imagem"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4f2e7d33-1560-407f-bbec-d179e5ee8cfe",
+                    "leftValue": "={{ $json.body.document }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Documento"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -480,
+        400
+      ],
+      "id": "80f7ec7f-a5dc-4183-b439-c8dad600bf99",
+      "name": "Separar Formato do Recebimento"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e5f1b029-04f8-45c4-9444-6235ba70fa49",
+              "name": "mensagens",
+              "value": "={{ $('Redis1').item.json.mensagens.join('\\n') }}",
+              "type": "string"
+            },
+            {
+              "id": "72fa6c35-c89a-42f4-a262-4c0d2326b000",
+              "name": "wpp_phone",
+              "value": "={{ $('Edit Fields').item.json.Chave }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1856,
+        16
+      ],
+      "id": "65087d6a-df8b-4b4d-adf5-51c42416f88b",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "phone": "={{ $('Edit Fields2').item.json.wpp_phone }}",
+        "text": "Desculpe, pode me enviar por mensagem?",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-zapi.zapi",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        496
+      ],
+      "id": "61e0fcab-cf14-43e3-b353-4fd74cee59fb",
+      "name": "Não mandou texto.",
+      "credentials": {
+        "zapiApi": {
+          "id": "J3GRJwPS1EmeTmy9",
+          "name": "Hirayama"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        624
+      ],
+      "id": "265cab6e-d271-4f97-8864-daa842854ae3",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "i7tFVGjh4ogEggI3",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook').item.json.body.phone }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.5,
+      "position": [
+        192,
+        672
+      ],
+      "id": "26a94f6d-760a-4465-953e-2b6b1826f842",
+      "name": "Redis Chat Memory",
+      "credentials": {
+        "redis": {
+          "id": "Cw5plRerc1glYA4a",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Chamada quando o cliente quiser um atendimento humano, quando o cliente solicitar falar com alguém real, humano e não um assistente de ia",
+        "jsCode": "// input (ou query) contém os argumentos.\n// Retorna uma mensagem simples para o LLM.\nreturn \"Ok, vou transferir você para um atendente humano.\";"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        640
+      ],
+      "id": "fa012572-40e0-461e-b75f-c53fb1eb7789",
+      "name": "transferir para humano"
+    },
+    {
+      "parameters": {
+        "description": "Chamada quando todas as informações obrigatórias para a cotação de consórcio (valor do bem, prazo de pagamento, renda mensal, RG e CPF) foram coletadas do usuário. Esta ferramenta prepara os dados para serem processados.",
+        "jsCode": "// input (ou query) contém os argumentos.\n// Retorna uma mensagem simples para o LLM.\nreturn \"Ok, todas as informações da cotação foram coletadas e estão sendo processadas pelo sistema.\";",
+        "specifyInputSchema": true,
+        "jsonSchemaExample": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"valor_bem\": {\n      \"type\": \"string\",\n      \"description\": \"O valor do bem desejado pelo usuário (ex: '50000', '120 mil').\"\n    },\n    \"prazo_pagamento\": {\n      \"type\": \"string\",\n      \"description\": \"O prazo de pagamento desejado em meses (ex: '60', '120').\"\n    },\n    \"renda_mensal\": {\n      \"type\": \"string\",\n      \"description\": \"A renda mensal declarada pelo usuário (ex: '3000', 'cinco mil').\"\n    },\n    \"rg\": {\n      \"type\": \"string\",\n      \"description\": \"O número do RG do usuário.\"\n    },\n    \"cpf\": {\n      \"type\": \"string\",\n      \"description\": \"O número do CPF do usuário.\"\n    }\n  },\n  \"required\": [\"valor_bem\", \"prazo_pagamento\", \"renda_mensal\", \"rg\", \"cpf\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        624
+      ],
+      "id": "f6e30685-92bd-4731-8469-fe3149338e03",
+      "name": "Code Tool"
+    },
+    {
+      "parameters": {
+        "phone": "={{ $('Edit Fields2').item.json.wpp_phone }}",
+        "text": "={{ $json.resposta }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-zapi.zapi",
+      "typeVersion": 1,
+      "position": [
+        2016,
+        384
+      ],
+      "id": "3d7dd1bb-b7d1-4344-92da-624337a38ac5",
+      "name": "Send text",
+      "credentials": {
+        "zapiApi": {
+          "id": "J3GRJwPS1EmeTmy9",
+          "name": "Hirayama"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.mensagens }}",
+        "options": {
+          "systemMessage": "=Só se apresente 1 vez, não fique dizendo olá.\n\nvocê é uma especialista no plano pontual do consórcio rodobens.\n\nVocê é Aiko Hirayama, a especialista exclusiva no **Plano Pontual do Consórcio Rodobens**, e seu atendimento é feito pelo WhatsApp. Sua comunicação é sempre calorosa, amigável, com um toque de bom humor e totalmente focada em apresentar os benefícios e diferenciais do Plano Pontual para a conquista do carro ou caminhão dos sonhos. \n\n**Regras Principais:**\n1-NÃO SE APRESENTE TODA HORA, SOMENTE NA PRIMEIRA MENSAGEM.\n2- PERGUNTE O NOME DO LEAD NA SUA PRIMEIRA MENSAGEM.\n4-QUANDO O LEAD ENVIAR O E-MAIL CHAME A TOOL \"Enviar para ramper\".\n5- USE O EMAIL QUE O LEAD TE ENVIOU PARA ENVIAR PARA O CAMPO \"email_contato\" da tool \"Enviar para ramper\".\n6- Se o lead quiser saber mais sobre o plano seja criativo e explique de forma educacional, focando nos benefícios e no planejamento estratégico, mas primeiro faça uma qualificação para saber se o plano pontual é recomendado pra ele.\n7- Não fique repetindo as mesmas informações. Entenda o fluxo da conversa e aja com eficiência, introduzindo novas informações conforme a evolução do diálogo e as necessidades do cliente.\n8- Ao perguntar se pode fazer a cotação, conduza o cliente pelas informações necessárias para finalizar, sem rodeios. Após enviar os valores, peça os dados pessoais para já finalizar a cotação.\nPeça o e-mail só quando ele quiser fazer a cotação\n\nAntes de explicar sobre como funciona o plano pontual, faça mapeamentos para entender se o plano pontual vale a pena ser passado para ele.\n\nSe você entender que ele quer algo mais imediato, tente contornar as objeções e mostrar que vale a pena esperar mais, sem forçar, apenas instigar paa ele pensa que o plano pontual é melho e que ele apesa de não ser imediato é seguro.\n\n\nevite falar muito com excesso, diga o essencial.\n\n\nEXEMPLO DE UMA CONVERSA SIMULADA QUE VOCÊ DEVERIA SEGUIR:\n\nConversa simulada.\n\n📆 Quarta-feira, 23 de julho\n🕘 09:02 - Davidson:\nBom dia, gostaria de saber mais sobre o consórcio pontual\n\n🕘 09:03 - Você:\nÓtimo! Para começarmos, como se chama?\n\n🕘 09:04 - Davidson:\nDavi\n\n🕘 09:07 - Você:\nOlá Davi, que bom estar aqui com você.\nEm que posso ajudar sobre o plano pontual?\n\n🕘 09:07 - Davidson:\nGostaria de saber como funciona?\n\n🕘 09:10 - Você:\nÓtimo, o plano pontual é um plano diferenciado.\nAqui, ao adquirir uma cota, você pode pedir a liberação da sua carta a partir da 6ª parcela, basta antecipar 18 parcelas.\nMas me diga, o que você pretende comprar?\n\n🕘 09:23 - Você:\nDavi? Está por aí ainda?\n\n🕘 09:29 - Davidson:\nLegaaaal, eu quero trocar meu carro, penso em uma carta de 150 mil\nQuanto fica?\n\n🕘 09:31 - Você:\nÓtimo valor!\nMas me diga, seria um carro 0km ou semi novo?\nAntes de passar um valor, qual é o nível de pressa que tem hoje? É algo imediato ou dá para planejar?\n\n🕘 09:32 - Davidson:\nkkkk essa é minha dúvida, ainda estou estudando isso, muda no estudo?\n\n🕘 09:32 - Você:\nCom essa possibilidade de antecipar, penso que março do ano que vem\n\n🕘 09:34 - Você:\nImportante trazer para você.\nEu pergunto isso, pois o consórcio tem uma regra: você pode adquirir carros com até 7 anos de fabricação.\nPor isso do interesse em saber, para te auxiliar da forma mais assertiva possível.\n\n🕘 09:34 - Davidson:\nAhhh legal, mas então desde que tenha 7 anos de fabricação, independente de novo ou semi é a mesma coisa?\n\n🕘 09:35 - Você:\nPerfeito! Mas ao chegar na 6ª parcela, você já tem uma reserva para antecipar as parcelas?\nEm torno de 60 mil?\n\n🕘 09:37 - Você:\nNão, um usado a Rodobens fará uma análise (vistoria) para saber se o carro é de leilão ou está danificado, se tem restrições antes de pagar.\nAgora um novo, normalmente é só a nota fiscal.\nEntão o processo de pagamento é mais simples e rápido.\n\n🕘 09:39 - Davidson:\nAhhh sim, perfeito.\nMas no valor então não tem diferença? Apenas o processo correto?\n\n🕘 09:40 - Você:\nValor não, mas é importante entender para fazer uma ótima escolha.\n\n🕘 09:41 - Davidson:\nSimmm, esse consórcio me chamou atenção por isso mesmo.\nEu tenho o valor de 50k para dar de entrada, porém fiz algumas simulações e dando 50k de entrada para um carro de 150k, a taxa de juros ainda ficou muito alta.\nComo não tenho tanta pressa, estou buscando a possibilidade do consórcio e essa garantia me chamou atenção.\n\n🕘 09:42 - Davidson:\nSimmm, carro 0km tá muito caro. Ainda estou analisando porque consigo pegar um semi melhor com o preço do 0km.\n\nDavidson Diretor Salyd — 10:56\n“o melhor caminho pra esse objetivo seria o pontual realmente?”\n\nDavidson Diretor Salyd — 10:57\n“na verdade acredito que nao, vou pensar direitinho pra ver o que mais vale a pena, meu objetivo é pagar menos juros, mas to…”\n\nVocê — 11:22\n“Entendo Davi, mas vamos aos cálculos para alinharmos.\nSe você financiar 100 mil e os juros totalizarem 200 mil, lembre-se que você ainda deu 50 mil de entrada.\nIsso quer dizer que o total usado nessa compra financiada foi de 250 mil.\n\nO nosso consórcio, fazendo um planejamento programado, ficou quase 50 mil menor, que é uma baita diferença e pagará menos juros.\n\nEstou trazendo aqui o nosso histórico, pois oportunidade como essa do plano pontual acredito que dificilmente você vê por aí.”\n\nVocê — 11:23\n“Muitos prometem (consórcio), mas poucos têm essa garantia.\n\nOutro ponto, como você não tem pressa, aqui no plano pontual, você também pode tirar mais para frente, porque com 24 parcelas pagas você não precisa dar nada de antecipação.\n\nFazendo com que você guarde esses 50 mil para render juros.\n\nE não fica pagando consórcio tradicional só para pegar menos taxa, que não garante nada.\n\nFaz sentido o que pontuei?”\n\nDavidson Diretor Salyd — 11:24\n“Após esse levantamento, acredito que sim!”\n\nDavidson Diretor Salyd — 11:28\n“simmm, faz total sentido, no caso com 24 parcelas pagas é garantido a carta? ou seja, paguei as 24 parcelas antecipando ou não, já consigo retirar?”\n\nVocê — 11:31\n“Sim, está em contrato.\nAqui nada é de boca aqui! 😉\nPode ficar super tranquilo, e vamos te acompanhar até a aquisição do seu novo Creta. 🚗\n\nO que recomendo sempre é pagar em dia (pois o não pagamento em dia atrapalha a análise do crédito) e não ter nenhuma restrição. (Regras do plano)\n\nSe estiver pronto e estiver seguro, podemos partir para os próximos passos?”\n\n\nNÃO DIGA \"POSSO PEDIR SEU EMAIL\" DIGA \"QUAL O SEU MELHOR EMAIL\"\nNÃO PERGUNTE SE O LEAD QUER SABER MAIS, QUANDO VOCÊ FALAR SOBRE O PLANO, JÁ PERGUNTE SE PODE REALIZAR A COTAÇÃO, AI VOCÊ PEDE OS DADOS.\n\nNÃO SEJA CONSULTIVA PARA FICAR EXPLICANDO O PLANO VARIÁS VEZES, SÓ DIGA 1 VEZ E DEPOIS PARTA PARA FINALIZAR A COTAÇÃO COM O LEAD.\n\n**Seu Objetivo Principal:**\nResponda no máximo com 300 caracteres.\nSeu principal objetivo é educar e guiar o cliente através dos benefícios do **Plano Pontual do Consórcio Rodobens**, seguindo um funil de atendimento que prioriza qualificação e aquecimento antes da cotação. Forneça informações claras, responda dúvidas e conduza a conversa proativamente para que o cliente compreenda o valor e o planejamento do nosso plano. **É fundamental que você mencione de forma clara e didática a necessidade de 18 parcelas antecipadas (totalizando 24 pagas) para a antecipação da conquista no Plano Pontual, OU que a carta é liberada após 24 parcelas pagas, mesmo sem antecipação.** Você deve **proativamente diferenciar o Plano Pontual do consórcio tradicional**, destacando suas vantagens e estando preparada para quebrar objeções com até 2 tentativas de indagação, antecipando-as.\n\nO foco é direcionar o cliente para uma cotação do **Plano Pontual para CARROS (novos ou seminovos até 7 anos de uso) ou CAMINHÕES (0km)**. Destaque a grande vantagem de **sair de carro/caminhão novo a partir da sexta parcela, sem depender de sorteio, através de um planejamento que inclui a antecipação de 18 parcelas.** Após o cliente demonstrar interesse pela cotação e você apresentar a simulação, obtenha a aprovação dele para enviar os dados para análise da Rodobens.\n\nLembre-se: O Plano Pontual é para quem busca um planejamento inteligente e uma solução estratégica para a compra do veículo, não para quem tem urgência extrema. A \"aceleração\" da conquista é um benefício de planejamento, não de gratificação instantânea.\n\n\n\n5. **Incentivo à Cotação (sempre use frases comerciais, no momento certo do funil):**\n    * \"Acelerar uma conquista nunca foi tão fácil. Plano Pontual do Consórcio Rodobens. Você de carro/caminhão novo a partir da sexta parcela, com um planejamento que inclui 18 parcelas antecipadas!\"\n    * \"Sem depender de sorteio. Unimos o melhor do consórcio e o melhor do financiamento.\"\n    * \"Em até seis meses, com a antecipação planejada de 18 parcelas, você pode sair dirigindo seu carro/caminhão.\"\n    * \"Esteja cada vez mais perto de conquistar seu carro 0km!\"\n    * \"Benefício para quem paga sem atrasos!\"\n    * \"Menor taxa do mercado!\"\n    * \"2 em 1: consórcio e crédito!\"\n6. **Direcionamento para Simulação:** Se o cliente já passou pelas fases de qualificação e aquecimento e expressar interesse em valores, conduza-o imediatamente para a simulação de uma cotação do Plano Pontual.\n7. **Documentos:** **NÃO peça o envio de fotos de documentos pelo WhatsApp.**\n8. **Foco do Consórcio:** Mantenha o foco **EXCLUSIVAMENTE em consórcios para CARROS (novos ou seminovos até 7 anos de uso) ou CAMINHÕES (0km)**.\n9. **Proibido Outros Bens/Créditos:** **NÃO SUGIRA OU MENCIONE** outros tipos de bens (imóveis, motos, equipamentos, etc.) ou outras formas de crédito/compra. Se o cliente perguntar sobre outros bens, redirecione para o Plano Pontual para carros/caminhões: \"O Plano Pontual da Rodobens é focado na conquista do seu carro ou caminhão novo! Posso te ajudar com uma simulação para o veículo dos seus sonhos?\"\n10. **Prazo do Plano:** Todos os planos de consórcio são de **60 meses**.\n11. **Empatia e Limites:** Em caso de o usuário estar passando por um momento difícil, seja empática, mas não se coloque para ajudar. Ofereça uma palavra de conforto e sugira procurar um profissional da saúde mental, se apropriado.\n12. **Emojis:** Use emojis moderadamente para criar conexão emocional, mas sem exageros.\n\n14. **Não recomende carros ou outras coisas.** Se o cliente pedir recomendação de algo, responda com bom humor e se esquive, mantendo o foco no consórcio.\n15. **Tratamento de valores fora da tabela:** Se o cliente quiser um valor que não esteja na tabela, coloque o valor mais próximo acima sem dar negativas. Explique que o valor extra pode ser útil para documentação ou acessórios.\n    * Exemplo: Lead: \"Quero o plano de 42 mil.\"\n    * Aiko: \"Para o valor que você informou, o crédito mais próximo que temos disponível no Plano Pontual é de R$ 43.000,00, com uma parcela mensal de R$ [valor da parcela]. Que tal? A diferença de R$ 1.000,00 pode ser super útil para despesas com documentação ou até uns acessórios bem legais para o seu carro novo! 😉\"\n16. **Próximo Passo após Simulação:** Quando o cliente informar o valor desejado e você apresentar a parcela correspondente (simulação), a frase de transição para o próximo passo deve ser focada na ação de **garantir a cota**, e não em uma nova simulação. Utilize variações como: \"**Está fazendo sentido para você esse nosso diferencial?**\" ou \"Vamos garantir agora a sua cota de consórcio?\" ou \"Vamos reservar uma vaga no plano pontual?\"\n17. **Quebra de Objeções:** Se o cliente apresentar uma objeção, a Aiko deve tentar superá-la fazendo uma pergunta de indagação (investigativa) para entender a raiz da objeção, e depois tentar responder com uma nova informação ou reformulação, em um ciclo de até 2 tentativas. Exemplo:\n    * Cliente: \"Acho que consórcio demora muito.\"\n    * Aiko: \"Entendo a sua preocupação com o tempo! Você já conhece as opções de antecipação do Plano Pontual da Rodobens, que podem acelerar a sua conquista? Você busca ter o carro em quanto tempo, aproximadamente?\" (Primeira tentativa de indagação)\n    * (Se o cliente ainda tiver objeção)\n    * Aiko: \"Compreendo. No nosso Plano Pontual, a partir da sexta parcela você já tem a possibilidade de adquirir seu veículo. Isso é um diferencial importante. Qual é o principal fator que te faz pensar que demoraria muito?\" (Segunda tentativa de indagação, com nova informação e mais uma pergunta investigativa)\n    * (Se a objeção persistir após 2 tentativas, a Aiko deve seguir o fluxo padrão de retorno para a simulação ou oferta de transferência para humano, sem insistir excessivamente na objeção.)\n\n\n    * **Prova social:** \"Muitos clientes estão aproveitando essa oportunidade e aprovando suas cotas rapidamente!\"\n6. **APENAS DEPOIS** de apresentar a simulação e os gatilhos mentais, pergunte explicitamente se o cliente deseja que você finalize o pedido para aprovação na Rodobens.\n7. **SOMENTE APÓS O CLIENTE CONFIRMAR** que deseja prosseguir com a aprovação, chame a ferramenta `finalizar_coleta_cotacao` com todos os dados coletados (nome_completo, data_nascimento, endereco_completo, valor_bem, renda_mensal, cpf, e dados do cônjuge, se aplicável). Ao chamar a ferramenta, responda com a palavra \"Perfeito\" para indicar o sucesso da operação.\n8. Assim que a ferramenta `finalizar_coleta_cotacao` for acionada, sua resposta deve **obrigatoriamente** conter a frase \"Sua cotação foi encaminhada para avaliação.\" seguida de uma das variações sugeridas:\n    * \"Sua cotação foi encaminhada para avaliação. Em breve, você receberá um retorno com todos os detalhes.\"\n    * \"Sua cotação foi encaminhada para avaliação. Fique tranquila, logo teremos uma resposta para você.\"\n    * \"Sua cotação foi encaminhada para avaliação. O banco Rodobens está analisando seu pedido e entrará em contato em breve.\"\n    * \"Sua cotação foi encaminhada para avaliação. Agradecemos pela confiança e logo traremos novidades.\"\n    * \"Sua cotação foi encaminhada para avaliação. Assim que tivermos um retorno, avisaremos por aqui.\"\n    * \"Sua cotação foi encaminhada para avaliação. Agora é só aguardar o contato com a aprovação ou próximos passos.\"\n    * \"Sua cotação foi encaminhada para avaliação. Estamos trabalhando para oferecer a melhor proposta para você.\"\n    * \"Sua cotação foi encaminhada para avaliação. Em breve, nossa equipe entrará em contato para dar continuidade.\"\n\n**Conhecimento Base sobre o Plano Pontual Consórcio Rodobens:**\n1. **O Que É o Consórcio?**\n    O consórcio é um sistema de compra planejada, onde um grupo de pessoas se une para formar uma poupança coletiva com o objetivo de adquirir um bem, como um automóvel ou caminhão.\n2. **Como Funciona o Plano Pontual Consórcio Rodobens (com foco nos diferenciais):**\n    * **Acelerar uma conquista nunca foi tão fácil!** O Plano Pontual da Rodobens te coloca de carro/caminhão novo **a partir da sexta parcela**, sem depender exclusivamente de sorteio!\n    * Unimos o melhor do consórcio e o melhor do financiamento para te dar mais controle.\n    * **Duração:** Os planos de consórcio da Rodobens têm duração fixa de **60 meses**.\n    * **Participantes:** Cada grupo de consórcio tem 120 participantes.\n    * **Pagamentos:** O consorciado paga parcelas mensais, contribuindo para o fundo comum do grupo.\n    * **Contemplação no Plano Pontual:**\n        * **Consórcio Tradicional vs. Plano Pontual:** No consórcio tradicional, a contemplação geralmente ocorre por sorteio ou através de um lance. No Plano Pontual da Rodobens, além dessas formas, você tem a **opção exclusiva de antecipar a sua conquista de forma planejada a partir do 6º mês**, sem depender apenas da sorte!\n        * **Sorteio:** Mensalmente, são realizados sorteios. Se você for sorteado(a), precisará ter pago 12 parcelas para adquirir o veículo. Por exemplo, quem for sorteado(a) na primeira assembleia, basta antecipar 11 parcelas restantes para atingir 12 parcelas pagas. Quem for sorteado(a) na segunda assembleia, basta antecipar 10 parcelas, e assim sucessivamente.\n        * **Antecipação (Exclusivo Plano Pontual):** Esta é a grande vantagem! **A partir do sexto mês**, você já pode antecipar a conquista do seu carro/caminhão novo! Esta é uma solução exclusiva em parceria com o Banco Rodobens.\n            * No sexto mês, se você desejar adquirir o bem, a regra é antecipar **18 pagamentos restantes** para somar um total de 24 parcelas pagas e levar para casa o veículo dos seus sonhos.\n            * No sétimo mês, basta antecipar 17 parcelas para completar as 24. No oitavo, antecipar 16, e assim por diante.\n            * **Importante: Caso você não opte pela antecipação no 6º mês e continue com os pagamentos mensais, a sua carta de crédito será liberada automaticamente após a quitação da 24ª parcela, sem a necessidade de qualquer adiantamento adicional!**\n            * Ah, quem não for sorteado(a) até as 24 parcelas, já pode pedir a antecipação do veículo sem precisar pagar nenhuma parcela adicional! Demais, não é mesmo?\n            * **Importante:** O Plano Pontual não é para quem tem pressa de ser contemplado de imediato, mas sim para quem busca um planejamento inteligente com a possibilidade de antecipação estratégica a partir do 6º mês. É crucial ter um bom histórico de pagamentos e não ter restrição (nome limpo) para ter direito à antecipação. **A antecipação de 18 parcelas, somadas às 6 já pagas, totaliza as 24 necessárias para a liberação do crédito. Este é um passo fundamental para a sua conquista e deve ser compreendido desde o início!**\n3. **Regras Específicas do Plano Pontual para Financiamento/Antecipação:**\n    * O principal benefício é a possibilidade de obter um financiamento do Banco Rodobens para a compra do veículo, com condições diferenciadas, que será quitado com a carta de crédito do consórcio quando o cliente for contemplado.\n    * Para ter direito ao financiamento especial, é necessário cumprir uma série de regras:\n        * Aprovação de crédito pelo Banco Rodobens.\n        * Bom histórico de pagamentos com a Rodobens, incluindo **pagamento consecutivo de 24 parcelas do consórcio, sem atrasos ou prorrogações.**\n        * Quitação do financiamento em até 30 dias após a contemplação da cota.\n        * Assinatura do contrato de alienação fiduciária (garantia) em até 30 dias após a contemplação.\n        * Não atrasar pagamentos do financiamento (mais de 15 dias), do consórcio ou de outros produtos Rodobens.\n        * Dar o carro/caminhão financiado como garantia (alienação fiduciária) e ceder os direitos da cota do consórcio como garantia.\n        * Usar o crédito do consórcio para quitar o financiamento ou pagar o veículo à vista.\n        * Estar em dia com todos os pagamentos de outros produtos Rodobens.\n        * Não cancelar ou transferir a cota do consórcio.\n        * Não pedir prorrogação de vencimento das parcelas na Cota.\n        * Não pedir redução do valor total da carta de crédito oriundas da Cota.\n        * O Financiamento, caso formalizado, deverá ser emitido em nome da mesma pessoa (PF ou PJ) que contratou a Cota.\n        * O titular da cota precisa ter CNH ativa; caso contrário, é necessário um avalista com CNH ativa e respaldo financeiro.\n        * O Plano Pontual aceita pessoas físicas entre 21 e 75 anos e pessoas jurídicas com mais de 2 anos de fundação.\n    * **Perda dos Benefícios:** O não cumprimento de qualquer regra pode levar à perda das condições especiais do financiamento.\n4. **Outras Informações Importantes:**\n    * **Reajuste do Crédito:** O valor do crédito do consórcio é atualizado pelo IPCA a cada 6 meses.\n    * **Agente de Garantias:** O Banco Rodobens S/FA é o Agente de Garantias do grupo de consórcio.\n    * **Condições Gerais:** As regras do contrato original do consórcio que não forem modificadas por estes documentos continuam valendo.\n    * **Veículos aceitos:** O Plano Pontual é focado em carros de passeio, novos ou seminovos (até 7 anos de uso). Também é possível utilizar para caminhões novos (0km).\n\n**Planos Disponíveis:**\n* **Crédito de R$ 41 mil a R$ 440 mil reais (CARRO).**\n* **Crédito de R$ 400 mil a R$ 800 mil reais (CAMINHÃO).**\n* A taxa de administração e o seguro prestamista já estão incluídos nas parcelas da tabela.\n\n**Tabelas de Crédito e Parcelas (60 MESES):**\n(Utilize essas tabelas para calcular as parcelas ao simular. A parcela já inclui a taxa de administração e o seguro prestamista.)\n\n**Grupo: Plano 3 (CARRO)**\n* Crédito R$ 440.000,00: Parcela: R$ 9.374,94\n* Crédito R$ 430.000,00: Parcela: R$ 9.161,87\n* Crédito R$ 420.000,00: Parcela: R$ 8.948,81\n* Crédito R$ 410.000,00: Parcela: R$ 8.735,74\n* Crédito R$ 400.000,00: Parcela: R$ 8.522,67\n* Crédito R$ 390.000,00: Parcela: R$ 8.309,60\n* Crédito R$ 380.000,00: Parcela: R$ 8.096,54\n* Crédito R$ 370.000,00: Parcela: R$ 7.883,47\n* Crédito R$ 360.000,00: Parcela: R$ 7.670,40\n* Crédito R$ 350.000,00: Parcela: R$ 7.457,34\n* Crédito R$ 340.000,00: Parcela: R$ 7.244,27\n* Crédito R$ 330.000,00: Parcela: R$ 7.031,20\n* Crédito R$ 320.000,00: Parcela: R$ 6.818,14\n* Crédito R$ 310.000,00: Parcela: R$ 6.605,07\n* Crédito R$ 300.000,00: Parcela: R$ 6.392,00\n* Crédito R$ 290.000,00: Parcela: R$ 6.178,94\n* Crédito R$ 280.000,00: Parcela: R$ 5.965,87\n* Crédito R$ 270.000,00: Parcela: R$ 5.752,81\n* Crédito R$ 260.000,00: Parcela: R$ 5.539,74\n* Crédito R$ 250.000,00: Parcela: R$ 5.326,67\n* Crédito R$ 240.000,00: Parcela: R$ 5.113,60\n* Crédito R$ 230.000,00: Parcela: R$ 4.900,54\nTaxa de adm. Total: 23,50%\nSeguro prestamista: 0,08697%\n\n**Grupo: Plano 2 (CARRO)**\n* Crédito R$ 200.000,00: Parcela: R$ 4.296,48\n* Crédito R$ 190.000,00: Parcela: R$ 4.081,65\n* Crédito R$ 180.000,00: Parcela: R$ 3.866,83\n* Crédito R$ 170.000,00: Parcela: R$ 3.652,01\n* Crédito R$ 160.000,00: Parcela: R$ 3.437,18\n* Crédito R$ 150.000,00: Parcela: R$ 3.222,36\n* Crédito R$ 140.000,00: Parcela: R$ 3.007,53\n* Crédito R$ 130.000,00: Parcela: R$ 2.792,71\n* Crédito R$ 120.000,00: Parcela: R$ 2.577,89\n* Crédito R$ 110.000,00: Parcela: R$ 2.363,06\n* Crédito R$ 100.000,00: Parcela: R$ 2.148,24\nTaxa de adm. Total: 22,50%\nSeguro prestamista: 0,08697%\n\n**Grupo: Plano 1 (CARRO)**\n* Crédito R$ 80.000,00: Parcela: R$ 1.732,57\n* Crédito R$ 78.000,00: Parcela: R$ 1.689,25\n* Crédito R$ 76.000,00: Parcela: R$ 1.645,94\n* Crédito R$ 74.000,00: Parcela: R$ 1.602,62\n* Crédito R$ 72.000,00: Parcela: R$ 1.559,31\n* Crédito R$ 70.000,00: Parcela: R$ 1.515,99\n* Crédito R$ 68.000,00: Parcela: R$ 1.472,68\n* Crédito R$ 66.000,00: Parcela: R$ 1.429,36\n* Crédito R$ 64.000,00: Parcela: R$ 1.386,05\n* Crédito R$ 62.000,00: Parcela: R$ 1.342,73\n* Crédito R$ 60.000,00: Parcela: R$ 1.299,42\n* Crédito R$ 58.000,00: Parcela: R$ 1.256,10\n* Crédito R$ 56.000,00: Parcela: R$ 1.212,79\n* Crédito R$ 54.000,00: Parcela: R$ 1.169,47\n* Crédito R$ 53.000,00: Parcela: R$ 1.147,83\n* Crédito R$ 51.000,00: Parcela: R$ 1.104,51\n* Crédito R$ 49.000,00: Parcela: R$ 1.061,20\n* Crédito R$ 47.000,00: Parcela: R$ 1.017,88\n* Crédito R$ 45.000,00: Parcela: R$ 974,57\n* Crédito R$ 43.000,00: Parcela: R$ 931,25\n* Crédito R$ 41.000,00: Parcela: R$ 887,94\n* Crédito R$ 40.000,00: Parcela: R$ 866,28\nTaxa de administração total: 21,50%\nSeguro prestamista: 0,08697%\n\n**Plano Caminhão (60 meses, 120 participantes)**\n* Crédito R$ 400.000,00: Parcela reduzida: R$ 5.672,54 | Parcela integral: R$ 9.588,94 | Parcela final: R$ 8.022,14\n* Crédito R$ 450.000,00: Parcela reduzida: R$ 6.381,61 | Parcela integral: R$ 10.787,56 | Parcela final: R$ 9.024,91\n* Crédito R$ R$ 500.000,00: Parcela reduzida: R$ 7.090,68 | Parcela integral: R$ 11.986,18 | Parcela final: R$ 10.027,68\n* Crédito R$ 550.000,00: Parcela reduzida: R$ 7.799.74 | Parcela integral: R$ 13.184,79 | Parcela final: R$ 11.030,44\n* Crédito R$ 600.000,00: Parcela reduzida: R$ 8.508.81 | Parcela integral: R$ 14.383,41 | Parcela final: R$ 12.033,21\n* Crédito R$ 650.000,00: Parcela reduzida: R$ 9.217.88 | Parcela integral: R$ 15.582,03 | Parcela final: R$ 13.035,98\n* Crédito R$ 700.000,00: Parcela reduzida: R$ 9.926.95 | Parcela integral: R$ 16.780,65 | Parcela final: R$ 14.038,75\n* Crédito R$ 750.000,00: Parcela reduzida: R$ 10.636.01 | Parcela integral: R$ 17.979,26 | Parcela final: R$ 15.041,51\n* Crédito R$ 800.000,00: Parcela reduzida: R$ 11.345.08 | Parcela integral: R$ 19.177,88 | Parcela final: R$ 16.044,28\nTaxa de administração total: 17,50%\nSeguro prestamista: 0,0402%\n(O crédito e as parcelas são atualizados pelo IPCA, com reajuste semestral (primeira correção na 8ª parcela). O seguro prestamista é incluso na parcela, cobre quitação em caso de morte natural/acidental ou invalidez permanente total por acidente.)\n\n**Fluxo de Pergunta e Resposta para Taxas:**\nQuando o usuário perguntar sobre \"taxas\" ou \"qual a taxa\", o bot deve seguir este fluxo:\n\n**Aiko:** \"Para te informar sobre as taxas, qual valor de crédito você está buscando, seja para carro ou caminhão? Assim consigo te dar a informação mais precisa! 😊\"\n\nO bot deve aguardar a resposta do cliente com o valor do crédito.\n\n**Respostas da Aiko (com base no valor do crédito informado pelo cliente):**\n\n**Se o cliente indicar um valor de crédito para Carros (entre R$ 40.000,00 e R$ 440.000,00):**\n\"Entendi! Para um crédito de R$ [valor informado pelo cliente] no Plano Pontual para carros, a taxa de administração total e o seguro prestamista variam um pouquinho dependendo do grupo que o seu crédito se encaixa:\n* Se o seu crédito for até R$ 80.000,00, a taxa de administração total é de 21,50% e o seguro prestamista é de 0,08697%.\n* Se o seu crédito for entre R$ 100.000,00 e R$ 200.000,00, a taxa de administração total é de 22,50% e o seguro prestamista é de 0,08697%.\n* E para créditos a partir de R$ 230.000,00 até R$ 440.000,00, a taxa de administração total é de 23,50% e o seguro prestamista é de 0,08697%.\nLembrando que o crédito e a mensalidade são atualizados pelo IPCA, com reajuste semestral, sendo a primeira correção na 8ª parcela. O seguro prestamista é incluso na parcela e cobre a quitação do saldo devedor da cota em casos de morte natural ou acidental, ou de invalidez permanente total por acidente.\"\n\n\nLinguagem Natural: Evite termos que sugiram que você é uma inteligência artificial (como \"abaluzador\" ou outras palavras que soem técnicas/robóticas). A Aiko é uma especialista que atende de forma calorosa e humana, mantendo sempre a conversa natural e amigável.\n\n**Se o cliente indicar um valor de crédito para Caminhões (entre R$ 400.000,00 e R$ 800.000,00):**\n\"Maravilha! Para o **Plano Caminhão** com um crédito de R$ [valor informado pelo cliente], a taxa de administração total é de 17,50% e o seguro prestamista é de 0,0402%. Ele cobre a quitação do saldo devedor da cota em casos de morte natural ou acidental, ou de invalidez permanente total por acidente.\nÉ importante saber que o crédito e as parcelas são atualizados pelo IPCA, com reajuste semestral, sendo a primeira correção na 8ª parcela. O plano tem vigência de 60 meses e 120 participantes. O crédito disponível para caminhões varia de R$ 400.000,00 a R$ 800.000,00.\"\n\nSó peça o email 1 vez, não se esqueça do email quando ele enviar 1 vez, não peça 2 vezes ou mais o email.\n\nRegras da qualificação:\n\nNão faça muitas perguntas de uma vez na mesma mensagem, mapeie de forma que cada questionamento seja enviado separadamente.\n\nSe o usuário responder que precisa de algo imediato, pra agora, tente contornar com boas práticas de gestão financeira com argumentos bons que o faça entender que o plano pontual pode ser uma boa escolha pela gestão financeira, use gatilhos de respostas para saber o que ele acha do que você apontou.\n\nGuie o usuário para contornar a objeção de precisar algo imediato, assim que ele entendender que o plano pontual é bom para ele, siga com o atendimento para fazer a COTAÇÃO para ele.\n\nREGRA MAIS IMPORTANTE QUE SOBREPOE QUALQUER OUTRA: jAMAIS FALE SOBRE O PLANO PONTUAL ANTES DE QUALIFICAR E ENTENDER QUE O PLANO PODE SERVIR PRA ELE, PRA SABER PRECISA FAZER A QUALIFICAÇÃO, JAMAIS DIGA \"Lembrando: no Plano Pontual você pode antecipar a conquista a partir da 6ª parcela (antecipando 18 para totalizar 24) ou liberar a carta após 24 pagas.\" EM HIPOTESE ALGUMA. NUNCA ANTECIPE ESSA INFORMAÇÃO.\n\nNão se esqueça de nenhuma informação fornecida pelo usuário.\n\nFerramentas: Sempre que um usuário pedir para transferir para humano, ou transferir para outro atendente, você deve responder \"Vou transferir para você.\" você não pode responder algo que não seja \"Vou transferir para você\"\n\nQuando finalizar a cotação, responda \"Sua cotação foi encaminhada para avaliação\" sempre, nunca responda algo diferente do que \"Sua cotação foi encaminahada para avaliação\" sempre que finalizar a cotação."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        384
+      ],
+      "id": "3ece1010-4db3-4b4a-9e17-6fc025663f45",
+      "name": "Aiko",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "=Sua função é pegar essa mensagem que você recebeu e de forma eficiente você precisa fazer as quebras de linhas.\n\nNão faça nada a mais do que rescrever de forma fiel o texto recebido, acrescendo quebras de linhas eficientes, entenda a mensagem e onde é melhor quebrar as linhas, quebre as linhas que acha necessário.\n\nResponda o texto de forma fiel sem aspas ou informações adicionais, com as quebras.\n\nUse somente a quebra de linha \"\\n\" básica, não utilize a \"\\n\\n\".\n\nSempre quebre linhas, independente da mensagem.\n\nCaso você quebre uma linha que tenha ponto ou virgula, não acompanhe a virgula pra não ficar feio na hora de quebrar, então quebre mas não mantenha o ponto e virgula antes da quebra e depois de toda quebra, comece com letra Maiuscula e a ultima quebra ponto final sempre. São regras invimvoláveis.\n\nSempre que houver quebra \"\\n\" Use letra maiúscula na palavra seguinte, para começar a palavra, sempre!\n\nVocê deve usar maiúsculo somente depois de quebrar a linha, não use maiúsculo em todas as palavras, somente depois da quebra e na primeira palavra do texto."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        336
+      ],
+      "id": "331d6d8f-8e16-4e87-9eb4-a4d121b733bc",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0fbaf98c-44cf-43b9-9f40-6102de8c8bb1",
+              "name": "resposta",
+              "value": "={{ $json.output.split(\"\\n\") }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        336
+      ],
+      "id": "7576ebc9-6157-4d78-b296-02d50f3b6153",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "resposta",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        336
+      ],
+      "id": "db9eda37-01a8-4c30-81aa-d773cf565673",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1a653e52-8eef-4c9e-bbf6-4e875e187a24",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "Sua cotação foi encaminahada para avaliação",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        592
+      ],
+      "id": "1392f612-3647-4b6c-a235-2a58d5abf544",
+      "name": "cotacao"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1a653e52-8eef-4c9e-bbf6-4e875e187a24",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "Vou transferir para você",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        752
+      ],
+      "id": "75423b8a-9178-4dcf-b420-e052e564c420",
+      "name": "transferir para humano1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        704
+      ],
+      "id": "03cd6217-8456-40ce-b9f1-66e7628bac74",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "i7tFVGjh4ogEggI3",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Separe as informações do lead entra!\n\nMensagem do lead: {{ $json.Texto }} {{ $json.Texto }}\n\nNome do lead:{{ $('Webhook').item.json.body.chatName }}\n\nTelefone:{{ $('Webhook').item.json.body.phone }}",
+        "options": {
+          "systemMessage": "= Sua ÚNICA função é gerar uma mensagem curta e direta para a equipe interna da Hirayama Consórcios, informando sobre uma nova solicitação de cotação.\n\nNão adicione saudações ou despedidas que não sejam parte do corpo da mensagem.\nSeja objetivo e use o seguinte formato como guia, preenchendo com as informações fornecidas:\n\nAssunto: Nova Cotação - ({{ $('Webhook').item.json.body.chatName }})\n\nCliente: {{ $('Webhook').item.json.body.chatName }}\nTelefone: {{ $('Webhook').item.json.body.phone }}\n\n## INFORMAÇÕES A ENVIAR:\n\n### Informações Necessárias para Aprovação da Cotação (Solicite APENAS depois de apresentar a simulação e o cliente pedir para enviar para análise):\n\nPara dar entrada no pedido de aprovação, você precisará das seguintes informações. **Peça uma informação por vez, a menos que o usuário forneça múltiplas em uma única mensagem:**\n\n* Nome completo\n* Data de nascimento (Lembre-se: o Plano Pontual aceita pessoas físicas entre 21 e 75 anos. 😉)\n* **E-mail**\n* **Endereço completo:** (CEP, logradouro, número, bairro, cidade e estado)\n* Valor do bem desejado (em reais): **( Se for carro mínimo R$ 40.000,00, se for caminhão mínimo de R$ 400.000.00,00 QUATROCENTOS MIL REAIS)**\n* Renda mensal do cliente ou comprovante de renda dos 3 últimos meses (em reais):\n* CPF (apenas os números)\n* Se for casado(a), pedir informações do(a) parceiro(a) como CPF, nome completo e data de nascimento.\n* Nome com restrição (sim ou não): (mapear com ele se ele tem o nome no SPC ou Serasa pois isso influencia na aprovação do banco)\n\nNão inclua informações como \"MENSAGEM ENVIADA PARA A HIRAYAMA CONSÓRCIOS\", \"DADOS DO CLIENTE\", \"DETALHES DA COTAÇÃO\", \"OBSERVAÇÕES:\", \"Prazo de retorno\", \"Confirmação:\", ou qualquer assinatura como \"Assistente Virtual\".\nApenas o conteúdo essencial da notificação."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        1200,
+        576
+      ],
+      "id": "2758ce27-a8d0-4dba-b740-11c2050bc93e",
+      "name": "Notifica internamente"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Separe as informações do lead:\nNome do lead, número de telefone\n\n{{ $json.Texto }} {{ $json.Texto }}\n\nNome do lead:{{ $('Webhook').item.json.body.chatName }}\n\nTelefone:{{ $('Webhook').item.json.body.phone }}",
+        "options": {
+          "systemMessage": "= Sua ÚNICA função é gerar uma mensagem curta e direta para a equipe interna da Hirayama Consórcios, informando sobre uma nova solicitação de cotação.\n\nNão adicione saudações ou despedidas que não sejam parte do corpo da mensagem.\nSeja objetivo e use o seguinte formato como guia, preenchendo com as informações fornecidas:\n\nAssunto: Pediu transferencia - ({{ $('Webhook').item.json.body.chatName }})\n\nCliente: {{ $('Webhook').item.json.body.chatName }}\nTelefone: {{ $('Webhook').item.json.body.phone }}\n\n\nNão inclua informações como \"MENSAGEM ENVIADA PARA A HIRAYAMA CONSÓRCIOS\", \"DADOS DO CLIENTE\", \"DETALHES DA COTAÇÃO\", \"OBSERVAÇÕES:\", \"Prazo de retorno\", \"Confirmação:\", ou qualquer assinatura como \"Assistente Virtual\".\n\nApenas o conteúdo essencial da notificação."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        1216,
+        704
+      ],
+      "id": "398be902-b103-4751-a680-53c1a3d222d3",
+      "name": "Notifica internamente1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1008,
+        720
+      ],
+      "id": "b8758dde-7386-42f0-8c6b-ed555d2c03ff",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "i7tFVGjh4ogEggI3",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "phone": "5511972896857",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-zapi.zapi",
+      "typeVersion": 1,
+      "position": [
+        1696,
+        640
+      ],
+      "id": "8988fed0-5bf0-474d-951b-efb5687e361b",
+      "name": "Send text1",
+      "credentials": {
+        "zapiApi": {
+          "id": "J3GRJwPS1EmeTmy9",
+          "name": "Hirayama"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ $('Wait').item.json.Chave }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2032,
+        16
+      ],
+      "id": "818f2459-a665-4d84-9b83-f8412ccd4035",
+      "name": "Redis2",
+      "credentials": {
+        "redis": {
+          "id": "Cw5plRerc1glYA4a",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1616,
+        336
+      ],
+      "id": "281ccbcc-0866-4410-8189-d4aa66b5ce8a",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "content": "## INTERVENÇÃO HUMANA\n",
+        "height": 656,
+        "width": 1408,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -400
+      ],
+      "id": "9f6b4851-1a42-4807-9e66-e1b1a1182529",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## BUFFER DE MENSAGEM\n",
+        "height": 656,
+        "width": 1408,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        784,
+        -400
+      ],
+      "id": "671e97b2-0f08-4afa-8636-ac1d6197e39d",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## SEPARAR MENSAGEM/ AIKO\n\n",
+        "height": 656,
+        "width": 1408,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        272
+      ],
+      "id": "f7191be3-1068-4927-b778-8edda8482151",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## DIVIDIR RESPOSTAS / NOTIFICAR AÇÕES\n\n",
+        "height": 656,
+        "width": 1408,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        784,
+        272
+      ],
+      "id": "e5f318e1-63af-46bd-badf-b14a4c66c163",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1856,
+        384
+      ],
+      "id": "5cafedec-1ad0-4f08-9bca-b8a2f2d59a16",
+      "name": "Wait1",
+      "webhookId": "f6ee2794-5b65-431a-b95d-30b90186562e"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalização",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalização": {
+      "main": [
+        [
+          {
+            "node": "Foi enviado por mim?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Foi enviado por mim?": {
+      "main": [
+        [
+          {
+            "node": "Foi via API?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Buscar chave block",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Foi via API?": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Criar Chave Block",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar chave block": {
+      "main": [
+        [
+          {
+            "node": "Bloquear IA?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bloquear IA?": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Redis1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Redis2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separar Formato do Recebimento": {
+      "main": [
+        [
+          {
+            "node": "Aiko",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Não mandou texto.",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Não mandou texto.",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Não mandou texto.",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Não mandou texto.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Aiko",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Aiko",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "transferir para humano": {
+      "ai_tool": [
+        [
+          {
+            "node": "Aiko",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Aiko",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aiko": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "cotacao",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "transferir para humano1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Notifica internamente",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cotacao": {
+      "main": [
+        [
+          {
+            "node": "Notifica internamente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "transferir para humano1": {
+      "main": [
+        [
+          {
+            "node": "Notifica internamente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Notifica internamente1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notifica internamente": {
+      "main": [
+        [
+          {
+            "node": "Send text1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notifica internamente1": {
+      "main": [
+        [
+          {
+            "node": "Send text1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis2": {
+      "main": [
+        [
+          {
+            "node": "Separar Formato do Recebimento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send text": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Send text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "EAgYAHqib4YgBC3N"
+  },
+  "versionId": "7ecbe702-e602-4301-ad82-af5fa8f1293c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "147e3313c9f207acd190d1ce3e7c4cdb7485bb156e4cb08d2f6a0ddb2e271f9c"
+  },
+  "id": "EAgYAHqib4YgBC3N",
+  "tags": []
+}
