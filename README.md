@@ -1,98 +1,209 @@
-# 🤖 SDR de IA — Cotação Automatizada (N8N)
+# 💰 Agente de IA HIRAYAMA – SDR de Cotação Automatizada
 
-Este projeto apresenta um **SDR Inteligente especializado em cotações**, criado para atender clientes de forma natural, rápida e totalmente automatizada.  
-Ele conversa como um humano, coleta informações, gera cotações e permite intervenção manual quando necessário — tudo pelo WhatsApp.
-
----
-
-## ✨ O que este SDR faz
-
-- 📥 Recebe mensagens via WhatsApp  
-- 💬 **Entende mensagens quebradas, curtas, incompletas ou confusas**  
-- 🤖 Responde de forma natural com **buffet de mensagens** (variações para evitar repetição)  
-- 🔤 Envia **mensagens levemente quebradas/humanizadas**, simulando digitação real  
-- ❓ Faz perguntas automáticas para coletar dados  
-- 📊 Constrói uma cotação com base nas informações recebidas  
-- 📩 Envia a cotação pronta ao cliente  
-- 👨‍💼 Permite **intervenção humana** a qualquer momento  
-- 🧠 Mantém o contexto da conversa do início ao fim  
-
-É um atendente comercial completo.
+> **SDR especializado em cotações**, focado em entender a demanda do lead, coletar variáveis comerciais e entregar **orçamento claro e rápido**, via conversa automatizada.
 
 ---
 
-## 🎯 Para que ele serve?
+## 🧭 Visão Geral
 
-Ideal para empresas que precisam:
+Este workflow implementa o **Agente de IA HIRAYAMA**, um **SDR de cotação**, responsável por:
 
-- Responder rápido  
-- Fazer cotações automaticamente  
-- Não perder oportunidades por falta de tempo  
-- Padronizar atendimento  
-- Scalabilidade sem aumentar equipe  
+* 📥 Receber solicitações de orçamento
+* 🧠 Entender o contexto da necessidade do cliente
+* 📋 Coletar variáveis essenciais para cotação
+* 🧮 Estruturar a lógica de precificação
+* 💬 Apresentar valores de forma clara e consultiva
+* 📅 Encaminhar para reunião quando necessário
 
-Funciona muito bem em: serviços, logística, orçamentos técnicos, atacado, varejo, manutenção, empreiteiras, consultorias etc.
-
----
-
-## 🚀 Como funciona (explicação simples)
-
-1. O cliente envia uma mensagem — mesmo se for incompleta, mal escrita ou só um áudio.  
-2. A IA entende a intenção e inicia a conversa.  
-3. O SDR faz perguntas automáticas para coletar tudo que precisa.  
-4. À medida que o cliente responde, o fluxo preenche as informações.  
-5. Quando tudo está pronto → a IA monta a cotação.  
-6. A cotação é enviada pelo WhatsApp com uma mensagem humanizada.  
-7. Caso alguém da equipe queira assumir a conversa:  
-   → **o modo humano desativa temporariamente a IA**.  
-8. Quando o humano sai, o SDR continua exatamente de onde parou.
-
-Tudo é fluido, natural e rápido.
+O agente atua antes do vendedor humano, **eliminando retrabalho**, acelerando o ciclo de vendas e padronizando propostas.
 
 ---
 
-## 🤖 Diferenciais que deixam o atendimento REAL
+## 🏗️ Arquitetura Geral
 
-### 🟦 1. Buffet de mensagens  
-O SDR possui **múltiplas versões** das mesmas respostas para evitar repetição robotizada.
-
-### 🟩 2. Entendimento de mensagens quebradas  
-Mensagens como:
-- “quanto ta”  
-- “faz preço???”  
-- “oq precisa pra fazer o orçamento?”  
-- “audio com ruido”  
-
-São interpretadas corretamente.
-
-### 🟧 3. Respostas humanizadas  
-A IA envia respostas com:
-- pausas  
-- pequenas quebras  
-- frases soltas  
-  
-… tornando tudo muito natural, sem parecer mensagens automáticas.
-
-### 🟥 4. Modo humano  
-A qualquer momento, um atendente real pode:
-- assumir a conversa  
-- enviar resposta manual  
-- pausar a IA  
-
-E depois a IA retoma o fluxo normalmente.
-
----
-
-## 🧠 O que acontece por trás (explicação simples)
-
-- **N8N** coordena todo o fluxo  
-- **IA generativa** escreve mensagens e entende o cliente  
-- **Transcrição de áudio** ajuda a interpretar mensagens de voz  
-- **Memória** permite continuar a conversa  
-- **WhatsApp API** envia e recebe tudo  
-- **Lógica de dados** organiza as informações da cotação  
-
-Não é necessário conhecimento técnico para usar — o fluxo já vem pronto.
+```
+[ Lead / Cliente ]
+        |
+        v
+[ Canal de Entrada ]
+        |
+        v
+[ Webhook HIRAYAMA ]
+        |
+        v
+[ Interpretação da Demanda ]
+        |
+        v
+[ Coleta de Variáveis ]
+        |
+        v
+[ IA de Cotação ]
+        |
+        +---------> [ Precificação ]
+        |
+        v
+[ Resposta ao Lead ]
+        |
+        v
+[ Reunião ou Encerramento ]
+```
 
 ---
 
+## 🧰 Tecnologias Utilizadas
+
+| Camada       | Tecnologia           | Função                   |
+| ------------ | -------------------- | ------------------------ |
+| Orquestração | **n8n**              | Backend conversacional   |
+| IA           | **OpenAI / LLM**     | Interpretação + cotação  |
+| Memória      | **Redis / Contexto** | Continuidade da conversa |
+| Comunicação  | **Webhook / API**    | Entrada de dados         |
+| Saída        | **WhatsApp / Chat**  | Envio da cotação         |
+
+---
+
+## 🔌 Entrada do Sistema
+
+**Endpoint:**
+
+```
+POST /webhook/hirayama
+```
+
+Recebe mensagens contendo:
+
+* Pedido direto de cotação
+* Descrição do serviço/produto
+* Dúvidas sobre preço
+
+---
+
+## 🧠 Interpretação da Demanda
+
+**Node:** `Agente HIRAYAMA`
+
+A IA analisa:
+
+* Tipo de serviço
+* Volume
+* Urgência
+* Complexidade
+* Perfil do cliente
+
+Objetivo: **entender o que precisa ser orçado antes de falar em preço**.
+
+---
+
+## 📋 Coleta de Variáveis de Cotação
+
+O agente conduz a conversa para coletar:
+
+* 📦 Tipo de serviço ou produto
+* 📐 Escopo
+* 🔢 Quantidade
+* ⏱️ Prazo
+* 🏢 Tipo de empresa
+
+> Perguntas são feitas apenas se necessárias, mantendo a conversa fluida.
+
+---
+
+## 🧮 Lógica de Precificação
+
+A IA utiliza regras de negócio embutidas no prompt para:
+
+* Definir faixa de preço
+* Ajustar valor por complexidade
+* Adaptar linguagem ao perfil do lead
+
+Exemplos:
+
+* Cotação fixa
+* Cotação por volume
+* Cotação sob consulta (com reunião)
+
+---
+
+## 💬 Apresentação da Cotação
+
+**Saída do agente:**
+
+* Valor ou faixa de preço
+* O que está incluso
+* Próximos passos
+
+Sempre com tom:
+
+* Profissional
+* Claro
+* Sem jargões desnecessários
+
+---
+
+## 🔁 Memória Conversacional
+
+* Mantém contexto por lead
+* Evita repetir perguntas
+* Permite ajustes na cotação
+
+---
+
+## 📅 Encaminhamento para Reunião
+
+Quando detectado:
+
+* Escopo complexo
+* Valor alto
+* Dúvidas recorrentes
+
+O agente:
+
+* Sugere reunião
+* Encaminha para SDR humano ou closer
+
+---
+
+## 📐 Formulação do Problema
+
+### 🎯 Objetivo
+
+Reduzir o tempo de resposta em cotações e aumentar taxa de conversão.
+
+---
+
+### 🔢 Variáveis
+
+* **N** = número de pedidos de cotação
+* **Q** = quantidade de perguntas necessárias
+* **Cᵢ** = custo por interação de IA
+* **V** = valor médio da proposta
+
+---
+
+### ⏱️ Complexidade
+
+* Temporal: **O(N × Q)**
+
+---
+
+### 💰 Custo estimado
+
+```
+Custo ≈ N × Q × Cᵢ
+```
+
+---
+
+## 🌟 Diferenciais do Agente HIRAYAMA
+
+* Cotação em tempo real
+* Atendimento 24/7
+* Padronização comercial
+* Menos fricção com vendas
+* Escalável
+
+---
+
+## ✅ Conclusão
+
+O **Agente de IA HIRAYAMA** transforma o n8n em um **SDR de cotação inteligente**, acelerando vendas, reduzindo custo operacional e aumentando a eficiência comercial.
